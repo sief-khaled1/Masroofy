@@ -6,6 +6,7 @@ class User:
         self.password = password
         self.transactions = []
         self.accounts = []
+        self.savings_goals = []
     
     def update_name(self,name):
         if name:

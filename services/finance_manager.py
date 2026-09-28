@@ -1,3 +1,4 @@
+from models.budget import Budget
 from models.user import User
 from models.account import Account,BankAccount,WalletAccount,CashAccount
 from models.transaction import Income,Expense,Transfer
@@ -48,16 +49,29 @@ class FinanceManager:
         return "Account deactivated successfully."
     
     def create_budget(user:User,amount,month,year,category:Category):
-        pass
+        if amount <= 0:
+            return "Budget amount must be positive."
+        budget = Budget(budget_id=len(user.budgets) + 1, user_id=user.user_id, amount=amount, month=month, year=year, category=category)
+        user.budgets.append(budget)
+        return "Budget created successfully."
     
     def update_budget(self,budget:Budget,amount):
-        pass
+        if amount <= 0:
+            return "Budget amount must be positive."
+        budget.amount = amount
+        return "Budget updated successfully."
     
     def create_savings_goal(user:User,year,target,amount):
-        pass
+        if amount <= 0:
+            return "Savings goal amount must be positive."
+        goal = SavingsGoal(goal_id=len(user.savings_goals) + 1, user_id=user.user_id, year=year,target_amount=amount,monthly_target=target)
+        user.savings_goals.append(goal)
+        return "Savings goal created successfully."
     
     def add_to_savings_plan(self,goal:SavingsGoal,month,amount):
-        pass
-    
+        if amount <= 0:
+            return "Savings plan amount must be positive."
+        goal.amount += amount
+        return "Amount added to savings plan successfully."
     
     
