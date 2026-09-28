@@ -3,6 +3,9 @@ from models.user import User
 from models.account import Account,BankAccount,WalletAccount,CashAccount
 from models.transaction import Income,Expense,Transfer
 from models.category import Category
+from services.file_manager import FileManager
+import os
+
 class FinanceManager:
     def add_income(self,user : User, amount,source,account:Account,date):
         if amount <= 0:
@@ -73,5 +76,25 @@ class FinanceManager:
             return "Savings plan amount must be positive."
         goal.amount += amount
         return "Amount added to savings plan successfully."
-    
-    
+
+    @staticmethod
+    def delete_budget(budget_id):
+        path = os.path.join(os.getcwd(), "data", "budgets.json")
+        budgets = FileManager().load(path)
+        for budget in budgets:
+            if budget["budget_id"] == budget_id:
+                budgets.remove(budget)
+                FileManager().save(path, budgets)
+                return
+        raise ValueError("Budget not found")
+
+    @staticmethod
+    def delete_saving_goal(goal_id):
+        path = os.path.join(os.getcwd(), "data", "saving_goals.json")
+        goals = FileManager().load(path)
+        for goal in goals:
+            if goal["goal_id"] == goal_id:
+                goals.remove(goal)
+                FileManager().save(path, goals)
+                return
+        raise ValueError("Saving goal not found")
