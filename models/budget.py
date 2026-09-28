@@ -55,7 +55,7 @@ class Budget:
             "amount": self.__amount,
             "month": self.__month,
             "year": self.__year,
-            "category": self.__category.category_id if self.__category is not None else None
+            "category_id": self.__category.category_id if self.__category is not None else None
         }
 
     @classmethod

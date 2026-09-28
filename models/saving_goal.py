@@ -4,7 +4,7 @@ class SavingGoal:
         self.__user_id = user_id
         self.__year = year
         if target_amount <= 0:
-            raise ValueError("Target amount cannot be negative")
+            raise ValueError("Target amount must be positive")
         self.__target_amount = target_amount
         self.__monthly_targets = monthly_targets if monthly_targets is not None else {}
 
@@ -26,15 +26,15 @@ class SavingGoal:
 
     def add_monthly_target(self, month, amount):
         if amount <= 0:
-            raise ValueError("Target amount cannot be negative")
+            raise ValueError("Target amount must be positive")
         if 1 <= month <= 12:
             self.__monthly_targets[month] = amount
         else:
             raise ValueError("Month must be between 1 and 12")
 
     def update_target_amount(self, new_amount):
-        if new_amount < 0:
-            raise ValueError("Target amount cannot be negative")
+        if new_amount <= 0:
+            raise ValueError("Target amount must be positive")
         self.__target_amount = new_amount
 
     def to_dict(self):

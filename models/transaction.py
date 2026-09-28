@@ -32,7 +32,7 @@ class Transaction(ABC):
         transaction_type = data.get("type")
 
         if transaction_type == "income":
-            return Income.from_dict(data, accounts_by_id)
+            return Income.from_dict(data, accounts_by_id, categories_by_id)
 
         elif transaction_type == "expense":
             return Expense.from_dict(data, accounts_by_id, categories_by_id)

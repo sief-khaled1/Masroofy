@@ -26,3 +26,5 @@ class UserDataLoader:
         budgets = [Budget.from_dict(data, categories_by_id.get(data["category_id"])) for data in budgets_data if data["user_id"] == user.user_id]
         savings_goals = [SavingGoal.from_dict(data) for data in goals_data if data["user_id"] == user.user_id]
         user.load_data(accounts, transactions, categories, budgets, savings_goals)
+
+        return user

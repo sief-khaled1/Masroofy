@@ -37,7 +37,7 @@ class Account(ABC):
 
     def withdraw(self, amount):
         if not self.__is_active:
-            raise ValueError("Account with balance cannot be used")
+            raise ValueError("Inactive account cannot be used")
         if amount <= 0:
             raise ValueError("The amount must be greater than 0")
         if self.can_withdraw(amount):
@@ -48,7 +48,7 @@ class Account(ABC):
 
     def deposit(self, amount):
         if not self.__is_active:
-            raise ValueError("Account with balance cannot be used")
+            raise ValueError("Inactive account cannot be used")
         if amount <= 0:
             raise ValueError("The amount must be greater than 0")
         self.__balance += amount

@@ -65,11 +65,12 @@ class SavingAnalyzer:
     @staticmethod
     def calc_req_monthly(goal, transactions):
         remaining_cost = goal.target_amount - SavingAnalyzer.calc_saved_sofar(goal, transactions)
-        remaining_months = [month for month in goal.monthly_targets if month >= datetime.date.today().month]
+        if goal.year < datetime.date.today().year:
+            raise ValueError("Saving goal year has already passed")
+        remaining_months = len([goal.monthly_targets] if goal.year > datetime.date.today().year else [month for month in goal.monthly_targets if month >= datetime.date.today().month])
         if remaining_cost <= 0:
-            req = 0
+            return 0
         if remaining_months <= 0:
-            raise ValueError("Month cannot be negative or zero")
-        req = remaining_cost / len(remaining_months)
+            raise ValueError("Months cannot be negative or zero")
+        req = remaining_cost / remaining_months
         return req
-        
