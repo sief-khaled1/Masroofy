@@ -4,6 +4,8 @@ class User:
         self.name = name
         self.email = email
         self.password = password
+        self.transactions = []
+        self.accounts = []
     
     def update_name(self,name):
         if name:
