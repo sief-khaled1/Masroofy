@@ -1,3 +1,6 @@
+from models.user import User
+
+
 class Category:
     def __init__(self,category_id,user_id,name,is_default=False,is_active=True):
         self.category_id = category_id
@@ -10,25 +13,22 @@ class Category:
     
     default_categories = ["Food","Transportation","Shopping","Bills","Health","Education","Entertainment","Other"]
     
-    def rename(self,name):
-        if self.is_default:
-            return "Default categories cannot be renamed"
-        if not name:
-            return "Category name cannot be empty"
-        self.name = name
-        return "Category renamed successfully."
+    def rename_category(self, user:User, category:Category, name):
+        if any(c.category_id != category.category_id and c.name.casefold() == name.strip().casefold() for c in user.categories):
+            return "Category already exists."
+        result = category.rename(name.strip())
+        self._save_user_data("categories.json", user.user_id, user.categories)
+        return result
     
-    def activate(self):
-        if self.is_active:
-            return "Category is already active."
-        self.is_active = True
-        return "Category activated successfully."
+    def activate_category(self, user:User, category:Category):
+        result = category.activate()
+        self._save_user_data("categories.json", user.user_id, user.categories)
+        return result
     
-    def deactivate(self):
-        if not self.is_active:
-            return "Category is already inactive."
-        self.is_active = False
-        return "Category deactivated successfully."
+    def deactivate_category(self, user:User, category:Category):
+        result = category.deactivate()
+        self._save_user_data("categories.json", user.user_id, user.categories)
+        return result
     
     def to_dict(self):
         return {

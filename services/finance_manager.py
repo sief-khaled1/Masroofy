@@ -61,6 +61,16 @@ class FinanceManager:
         user.accounts.append(account)
         self.save_user_data("accounts.json", user.user_id, user.accounts)
         return "Account created successfully."
+    
+    def create_category(self, user:User, name):
+        if not name.strip():
+            return "Category name cannot be empty."
+        if any(category.name.casefold() == name.strip().casefold() for category in user.categories):
+            return "Category already exists."
+        category = Category(category_id=self._generate_id(user.categories, "category_id"), user_id=user.user_id, name=name.strip())
+        user.categories.append(category)
+        self._save_user_data("categories.json", user.user_id, user.categories)
+        return "Category created successfully."
 
     def deactivate_account(self, account:Account, user:User):
         if not account.is_active:
