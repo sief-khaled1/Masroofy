@@ -23,19 +23,21 @@ class FinanceManager:
     def add_income(self, user : User, amount,source,account:Account,date):
         if amount <= 0:
             return "Income amount must be positive."
-        income = Income(transaction_id=len(user.transactions) + 1, user_id=user.user_id, amount=amount, date=date, destination_account=account, source=source)
+        income = Income(transaction_id=self.generate_id(user.transactions, "transaction_id"), user_id=user.user_id, amount=amount, date=date, destination_account=account, source=source)
         income.execute()
         user.transactions.append(income)
         self.save_user_data("transactions.json", user.user_id, user.transactions)
+        self.save_user_data("accounts.json", user.user_id, user.accounts)
         return "Income added successfully."
 
     def add_expense(self, user:User,amount,account:Account,category:Category,date):
         if amount <= 0:
             return "Expense amount must be positive."
-        expense = Expense(transaction_id=len(user.transactions) + 1,user_id=user.user_id,amount=amount,date=date,source_account=account,category=category)
+        expense = Expense(transaction_id=self.generate_id(user.transactions, "transaction_id"),user_id=user.user_id,amount=amount,date=date,source_account=account,category=category)
         expense.execute()
         user.transactions.append(expense)
         self.save_user_data("transactions.json", user.user_id, user.transactions)
+        self.save_user_data("accounts.json", user.user_id, user.accounts)
         return "Expense added successfully."
 
     def transfer(self, user:User,amount,source:Account,destination:Account,date):
@@ -45,6 +47,7 @@ class FinanceManager:
         transfer.execute()
         user.transactions.append(transfer)
         self.save_user_data("transactions.json", user.user_id, user.transactions)
+        self.save_user_data("accounts.json", user.user_id, user.accounts)
         return "Transfer added successfully."
 
     def create_account(self, user:User,account_type,opening_balance):
@@ -67,10 +70,27 @@ class FinanceManager:
             return "Category name cannot be empty."
         if any(category.name.casefold() == name.strip().casefold() for category in user.categories):
             return "Category already exists."
-        category = Category(category_id=self._generate_id(user.categories, "category_id"), user_id=user.user_id, name=name.strip())
+        category = Category(category_id=self.generate_id(user.categories, "category_id"), user_id=user.user_id, name=name.strip())
         user.categories.append(category)
-        self._save_user_data("categories.json", user.user_id, user.categories)
+        self.save_user_data("categories.json", user.user_id, user.categories)
         return "Category created successfully."
+    
+    def rename_category(self, user:User, category:Category, name):
+        if any(c.category_id != category.category_id and c.name.casefold() == name.strip().casefold() for c in user.categories):
+            return "Category already exists."
+        result = category.rename(name.strip())
+        self._save_user_data("categories.json", user.user_id, user.categories)
+        return result
+        
+    def activate_category(self, user:User, category:Category):
+        result = category.activate()
+        self._save_user_data("categories.json", user.user_id, user.categories)
+        return result
+        
+    def deactivate_category(self, user:User, category:Category):
+        result = category.deactivate()
+        self._save_user_data("categories.json", user.user_id, user.categories)
+        return result
 
     def deactivate_account(self, account:Account, user:User):
         if not account.is_active:
@@ -84,6 +104,8 @@ class FinanceManager:
             return "Budget amount must be positive."
         for budget in user.budgets:
             if budget.month == month and budget.year == year:
+                if budget.is_overall() and category is None:
+                    return "Overall budget already exists for this month."
                 if not budget.is_overall() and category is not None and budget.category.category_id == category.category_id:
                     return "Budget already exists for this category."
         budget = Budget(budget_id=self.generate_id(user.budgets, "budget_id"), user_id=user.user_id, amount=amount, month=month, year=year, category=category)

@@ -13,22 +13,16 @@ class Category:
     
     default_categories = ["Food","Transportation","Shopping","Bills","Health","Education","Entertainment","Other"]
     
-    def rename_category(self, user:User, category:Category, name):
-        if any(c.category_id != category.category_id and c.name.casefold() == name.strip().casefold() for c in user.categories):
-            return "Category already exists."
-        result = category.rename(name.strip())
-        self._save_user_data("categories.json", user.user_id, user.categories)
-        return result
+    def rename(self, name):
+        if not name.strip():
+            raise ValueError("Category name cannot be empty")
+        self.name = name.strip()
     
-    def activate_category(self, user:User, category:Category):
-        result = category.activate()
-        self._save_user_data("categories.json", user.user_id, user.categories)
-        return result
+    def activate(self):
+        self.is_active = True
     
-    def deactivate_category(self, user:User, category:Category):
-        result = category.deactivate()
-        self._save_user_data("categories.json", user.user_id, user.categories)
-        return result
+    def deactivate(self):
+        self.is_active = False
     
     def to_dict(self):
         return {

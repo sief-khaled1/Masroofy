@@ -63,14 +63,15 @@ class SavingAnalyzer:
             raise ValueError("Month is not in the saving plan")
         return max(FinanceAnalyzer.calc_net_savings(transactions, month, goal.year) - goal.monthly_targets.get(month),0)
     @staticmethod
-    def calc_req_monthly(goal, transactions):
-        remaining_cost = goal.target_amount - SavingAnalyzer.calc_saved_sofar(goal, transactions)
-        if goal.year < datetime.date.today().year:
-            raise ValueError("Saving goal year has already passed")
-        remaining_months = len([goal.monthly_targets] if goal.year > datetime.date.today().year else [month for month in goal.monthly_targets if month >= datetime.date.today().month])
-        if remaining_cost <= 0:
+    def calc_req_monthly(self, goal):
+        today = datetime.date.today()
+        if goal.year > today.year:
+            remaining_months = len(goal.monthly_targets)
+        elif goal.year == today.year:
+            remaining_months = len([month for month in goal.monthly_targets if month >= today.month])
+        else:
+            remaining_months = 0
+        if remaining_months == 0:
             return 0
-        if remaining_months <= 0:
-            raise ValueError("Months cannot be negative or zero")
-        req = remaining_cost / remaining_months
-        return req
+        remaining_amount = sum(amount for month, amount in goal.monthly_targets.items() if goal.year > today.year or month >= today.month)
+        return remaining_amount / remaining_months
