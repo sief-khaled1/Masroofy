@@ -55,9 +55,9 @@ class Budget:
             "amount": self.__amount,
             "month": self.__month,
             "year": self.__year,
-            "category": self.__category.id if self.__category is not None else None
+            "category": self.__category.category_id if self.__category is not None else None
         }
 
     @classmethod
-    def from_dict(cls, data):
-        return cls(data["budget_id"], data["user_id"], data["amount"], data["month"], data["year"], data["category"])
+    def from_dict(cls, data, category=None):
+        return cls(data["budget_id"], data["user_id"], data["amount"], data["month"], data["year"], category)

@@ -7,6 +7,15 @@ class User:
         self.transactions = []
         self.accounts = []
         self.savings_goals = []
+        self.categories = []
+        self.budgets = []
+
+    def load_data(self, accounts, transactions, categories, budgets, savings_goals):
+        self.accounts = accounts
+        self.transactions = transactions
+        self.categories = categories
+        self.budgets = budgets
+        self.savings_goals = savings_goals
     
     def update_name(self,name):
         if name:
