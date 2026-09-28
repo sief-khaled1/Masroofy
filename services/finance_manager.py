@@ -3,7 +3,7 @@ from models.account import Account,BankAccount,WalletAccount,CashAccount
 from models.transaction import Income,Expense,Transfer
 from models.category import Category
 class FinanceManager:
-    def add_income(self,user : User,amount : Account,source,account,date):
+    def add_income(self,user : User, amount,source,account:Account,date):
         if amount <= 0:
             return "Income amount must be positive."
         income = Income(transaction_id=len(user.transactions) + 1, user_id=user.user_id, amount=amount, date=date, destination_account=account, source=source)
@@ -11,15 +11,17 @@ class FinanceManager:
         user.transactions.append(income)
         return "Income added successfully."
     
-    def add_expense(self,user:User,amount:Account,category:Category,date):
+    def add_expense(self,user:User,amount,account:Account,category:Category,date):
         if amount <= 0:
             return "Expense amount must be positive."
-        expense = Expense(transaction_id=len(user.transactions) + 1, user_id=user.user_id, amount=amount, date=date, category=category)
+        expense = Expense(transaction_id=len(user.transactions) + 1,user_id=user.user_id,amount=amount,date=date,source_account=account,category=category)
         expense.execute()
         user.transactions.append(expense)
         return "Expense added successfully."
     
     def transfer(self,user:User,amount,source:Account,destination:Account,date):
+        if amount <= 0:
+            return "Transfer amount must be positive."
         transfer=Transfer(transaction_id=len(user.transactions) + 1, user_id=user.user_id, amount=amount, date=date, source_account=source, destination_account=destination)
         transfer.execute()
         user.transactions.append(transfer)
