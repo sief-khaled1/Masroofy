@@ -51,7 +51,7 @@ class FinanceManager:
         account.deactivate()
         return "Account deactivated successfully."
     
-    def create_budget(user:User,amount,month,year,category:Category):
+    def create_budget(self,user:User,amount,month,year,category:Category):
         if amount <= 0:
             return "Budget amount must be positive."
         budget = Budget(budget_id=len(user.budgets) + 1, user_id=user.user_id, amount=amount, month=month, year=year, category=category)
@@ -61,10 +61,10 @@ class FinanceManager:
     def update_budget(self,budget:Budget,amount):
         if amount <= 0:
             return "Budget amount must be positive."
-        budget.amount = amount
+        budget.update_amount(amount)
         return "Budget updated successfully."
     
-    def create_savings_goal(user:User,year,target,amount):
+    def create_savings_goal(self,user:User,year,target,amount):
         if amount <= 0:
             return "Savings goal amount must be positive."
         goal = SavingsGoal(goal_id=len(user.savings_goals) + 1, user_id=user.user_id, year=year,target_amount=amount,monthly_target=target)
